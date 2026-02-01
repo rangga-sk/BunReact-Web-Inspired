@@ -1,0 +1,31 @@
+{
+  "name": "bun-react-template",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"bun run dev:css\" \"bun run dev:bf\" \"bun run dev:server\"",
+    "dev:css": "bunx tailwindcss -i ./src/index.css -o ./public/styles.css --minify",
+    "dev:bf": "bun build frontend/*.jsx --outdir dist/ --target browser --format esm --minify",
+    "dev:server": "bun run backend/server.ts --hot",
+    "start": "NODE_ENV=production bun src/index.ts",
+    "build": "bun run build.ts"
+  },
+  "dependencies": {
+    "lucide-react": "^0.562.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.16.2",
+    "react": "^19",
+    "react-dom": "^19.2.3",
+    "tailwindcss": "^4.1.18"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "@types/bun": "latest",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.23",
+    "concurrently": "^9.2.1",
+    "postcss": "^8.5.6"
+  }
+}
