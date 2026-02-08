@@ -18,7 +18,7 @@ To run for production:
 bun start
 ```
 
-Step Awal Conect Git
+Step Awal Connect Git
  - git init
  - git remote add origin (url repo nya, ssh / http)
  

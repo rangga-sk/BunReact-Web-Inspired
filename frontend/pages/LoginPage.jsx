@@ -1,25 +1,59 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Eye, EyeOff, Mail, Lock, LogIn, PencilLine } from 'lucide-react';
+import { useForm } from "react-hook-form";
+import { Eye, EyeOff, Lock, LogIn, PencilLine } from 'lucide-react';
+import { loginDef } from '../services/login.service';
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit
+  } = useForm();
+
+  const onSubmit = async (data) => {
     setIsLoading(true);
-    
-    setTimeout(() => {
-      alert(`Login with: ${email}`);
-      setIsLoading(false);
-    }, 1500);
+    try {
+      const check = await(loginDef(data));
+      if (check.status == 200) {
+        toast(check.data.message, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+          theme: "colored"
+        });
+      } else {
+        toast.error(check.data.message, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored"
+        });
+      }
+    } catch (error) {
+      alert(error);
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }
+
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 flex items-center justify-center p-4">
+      <ToastContainer />
       <div className="absolute top-20 left-10 w-72 h-72 bg-sky-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
       <div className="absolute bottom-20 right-10 w-72 h-72 bg-emerald-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
       
@@ -34,27 +68,28 @@ export default function LoginPage() {
           </div>
 
           <div className="p-8">
+          <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
             <div className="space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Username or Email
+                <label htmlFor="userlogin" className="block text-sm font-medium text-gray-700 mb-2">
+                  Username
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <PencilLine className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    id="email"
+                    id="userlogin"
                     type="text"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    {...register("user", { required: true })}
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent transition duration-200 outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="passlogin" className="block text-sm font-medium text-gray-700 mb-2">
                   Password
                 </label>
                 <div className="relative">
@@ -62,10 +97,9 @@ export default function LoginPage() {
                     <Lock className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    id="passlogin"
+                    type={showPassword ? 'password' : 'text'}
+                    {...register("pass", { required: true })}
                     className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent transition duration-200 outline-none"
                     placeholder="Enter your password"
                   />
@@ -157,15 +191,16 @@ export default function LoginPage() {
                 Sign up for free
               </button>
             </p>
+            </form>
           </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-gray-500">
+        {/* <p className="mt-6 text-center text-xs text-gray-500">
           By signing in, you agree to our{' '}
           <button className="text-sky-500 hover:text-sky-600">Terms</button>
           {' '}and{' '}
           <button className="text-sky-500 hover:text-sky-600">Privacy Policy</button>
-        </p>
+        </p> */}
       </div>
     </div>
   );

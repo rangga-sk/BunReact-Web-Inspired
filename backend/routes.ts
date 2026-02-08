@@ -1,4 +1,4 @@
-import { handleLogin } from "./apiLogin";
+import { handleLogin } from "./loginApi";
 
 export async function handleRoutes(req: Request, corsHeaders: Record<string, string>) {
     const url = new URL(req.url);
@@ -26,6 +26,8 @@ export async function handleRoutes(req: Request, corsHeaders: Record<string, str
       return new Response(file);
     }
 
+    // BATAS AWAL ROUTE HALAMAN ================================
+
     // Route: Login Page
     if (path === '/login') {
       try {
@@ -40,6 +42,11 @@ export async function handleRoutes(req: Request, corsHeaders: Record<string, str
           </head>
             <body>
               <div id="root"></div>
+              <script>
+                window.__CONFIG__ = {
+                  API_URL: "${Bun.env.API_URL}"
+                };
+              </script>
               <script type="module" src="/dist/LoginPage.js"></script>
             </body>
           </html>
@@ -77,13 +84,13 @@ export async function handleRoutes(req: Request, corsHeaders: Record<string, str
         return new Response('Error loading page', { status: 500 });
       }
     }
+
+    // BATAS AKHIR ROUTE HALAMAN ================================
   
-    // Route: Static files
-    // if (path.startsWith('/api/')) {
-    //   if (path.startsWith('/api/login')) {
-    //     return handleLogin(req, corsHeaders);
-    //   }
-    // }
+    // Route API (/bad/{api})
+    if (path.startsWith('/bad/login')) {
+      return handleLogin(req, corsHeaders);
+    }
 
     return new Response('404 - Page Not Found', {
       status: 404,
